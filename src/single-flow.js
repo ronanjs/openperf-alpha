@@ -2,20 +2,28 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:33:42
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 09:52:15
+* @Last Modified time: 2020-10-21 10:32:29
 */
 
 const chalk = require('chalk')
 const { table } = require('table')
+const { wait } = require('./core/utils')
 
 // const { Captures } = require('./core/captures')
 const { OpenPerfClient } = require('./core/opclient')
+const { TimeSources } = require('./core/timesource')
 
 async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
   const genClient = new OpenPerfClient(genServerIP)
   const anaClient = new OpenPerfClient(anaServerIP)
 
   await Promise.all([genClient.check(), anaClient.check()])
+
+  const genTimesources = new TimeSources(genClient)
+  await genTimesources.create('timesource-gen-01', '10.61.34.17')
+
+  const anaTimesources = new TimeSources(anaClient)
+  await anaTimesources.create('timesource-ana-01', '10.61.34.17')
 
   const genPort = await genClient.ports().get(genPortID)
   const anaPort = await anaClient.ports().get(anaPortID)
@@ -34,6 +42,8 @@ async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
   // await cap2.start()
   await ana.start()
   await gen.start()
+
+  await wait(1000)
 
   while (true) {
     const res = await Promise.all([gen.results(), ana.results()]);
@@ -68,6 +78,8 @@ async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
     // console.log(await cap1.results())
     // console.log(await cap2.results())
     // await  wait(500);
+
+    return
   }
 }
 
