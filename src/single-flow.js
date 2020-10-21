@@ -2,33 +2,32 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:33:42
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 08:57:43
+* @Last Modified time: 2020-10-21 09:52:15
 */
 
 const chalk = require('chalk')
 const { table } = require('table')
 
-const { Generators } = require('./core/generators')
-const { Analysers } = require('./core/analysers')
 // const { Captures } = require('./core/captures')
 const { OpenPerfClient } = require('./core/opclient')
 
-async function run (genServerIP, genPort, anaServerIP, anaPort) {
+async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
   const genClient = new OpenPerfClient(genServerIP)
   const anaClient = new OpenPerfClient(anaServerIP)
 
   await Promise.all([genClient.check(), anaClient.check()])
 
+  const genPort = await genClient.ports().get(genPortID)
+  const anaPort = await anaClient.ports().get(anaPortID)
+
   // const cap1 = await Captures.createFromPort(genClient, genPort).create('capture-gen-01')
   // const cap2 = await Captures.createFromPort(anaClient, anaPort).create('capture-ana-01')
   // if (!cap1 || !cap2) return
 
-  const analysers = Analysers.createFromPort(anaClient, anaPort)
-  const ana = await analysers.create('analyser-01')
+  const ana = await anaPort.analysers().create('analyser-01')
   if (!ana) return
 
-  const generators = Generators.createFromPort(genClient, genPort)
-  const gen = await generators.create('generator-01')
+  const gen = await genPort.generators().create('generator-01')
   if (!gen) return
 
   // await cap1.start()

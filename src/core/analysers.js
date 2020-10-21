@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 08:50:02
+* @Last Modified time: 2020-10-21 09:21:40
 */
 
 const chalk = require('chalk')
@@ -23,9 +23,7 @@ class Analysers {
   }
 
   exists (id) {
-    return this.list().then(analyzers => {
-      return analyzers.map(x => x.id).indexOf(id) >= 0
-    })
+    return this.list().then(analyzers => analyzers.map(x => x.id).indexOf(id) >= 0)
   }
 
   delete (id) {

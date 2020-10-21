@@ -1,6 +1,7 @@
 
 const chalk = require('chalk')
 const fetch = require('node-fetch')
+const { Ports } = require('./ports')
 
 class OpenPerfClient {
   constructor (serverIP) {
@@ -16,6 +17,10 @@ class OpenPerfClient {
       process.exit(-1)
       // return false
     })
+  }
+
+  ports () {
+    return new Ports(this)
   }
 
   get (url) {

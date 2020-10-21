@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 08:50:45
+* @Last Modified time: 2020-10-21 09:33:32
 */
 
 const chalk = require('chalk')
@@ -23,9 +23,7 @@ class Generators {
   }
 
   exists (id) {
-    return this.list().then(generators => {
-      return generators.map(x => x.id).indexOf(id) >= 0
-    })
+    return this.list().then(generators => generators.map(x => x.id).indexOf(id) >= 0)
   }
 
   delete (id) {
@@ -50,10 +48,10 @@ class Generators {
       time_to_live: 64,
       version: 4
     }
-    // const udp = {
-    //   destination: 3357,
-    //   source: 3357
-    // }
+    const udp = {
+      destination: 3357,
+      source: 3357
+    }
 
     const traffic = {
       length: {
@@ -65,6 +63,8 @@ class Generators {
           ethernet
         }, {
           ipv4
+        }, {
+          udp
         }]
       },
       weight: 1
@@ -155,5 +155,4 @@ class Generator {
 }
 
 module.exports.Generator = Generator
-
 module.exports.Generators = Generators

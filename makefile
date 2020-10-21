@@ -8,3 +8,6 @@ node_modules:
 
 format:
 	./node_modules/standard/bin/cmd.js --fix "src/*.js" "src/core/*.js"
+
+
+-include Makefile.local
