@@ -1,0 +1,14 @@
+{
+  "name": "javascript",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "node-fetch": "^2.6.1",
+    "table": "^6.0.3"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
+  }
+}
