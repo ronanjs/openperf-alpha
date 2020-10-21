@@ -7,7 +7,7 @@ node_modules:
 	yarn install
 
 format:
-	./node_modules/standard/bin/cmd.js --fix "src/*.js" "src/core/*.js"
+	./node_modules/standardx/bin/cmd.js -v --fix "src/*.js" "src/core/*.js"
 
 
 -include Makefile.local

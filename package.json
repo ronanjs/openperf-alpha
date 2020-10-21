@@ -9,6 +9,14 @@
     "table": "^6.0.3"
   },
   "devDependencies": {
-    "standard": "^14.3.4"
+    "standardx": "^5.0.0"
+  },
+  "eslintConfig": {
+    "rules": {
+      "indent": [
+        "error",
+        4
+      ]
+    }
   }
 }

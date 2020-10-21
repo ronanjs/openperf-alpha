@@ -2,3 +2,6 @@
 
 swtb:
 	node src/single-flow.js 10.61.34.10 10.61.34.11
+
+swtbx:
+	node src/single-flow.js 10.61.34.11 10.61.34.10

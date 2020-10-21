@@ -10,39 +10,39 @@ const { Generators } = require('./generators')
 const { Analysers } = require('./analysers')
 
 class Ports {
-  constructor (opClient) {
-    this.opClient = opClient
-  }
-
-  list () {
-    return this.opClient.get('ports')
-  }
-
-  exists (id) {
-    return this.list().then(ports => ports.map(x => x.id).indexOf(id) >= 0)
-  }
-
-  async get (id) {
-    if (await !this.exists(id)) {
-      throw (new Error('Port ' + chalk.red(id) + ' does not exist...'))
+    constructor (opClient) {
+        this.opClient = opClient
     }
-    return new Port(this.opClient, id)
-  }
+
+    list () {
+        return this.opClient.get('ports')
+    }
+
+    exists (id) {
+        return this.list().then(ports => ports.map(x => x.id).indexOf(id) >= 0)
+    }
+
+    async get (id) {
+        if (await !this.exists(id)) {
+            throw (new Error('Port ' + chalk.red(id) + ' does not exist...'))
+        }
+        return new Port(this.opClient, id)
+    }
 }
 
 class Port {
-  constructor (opClient, portID) {
-    this.opClient = opClient
-    this.portID = portID
-  }
+    constructor (opClient, portID) {
+        this.opClient = opClient
+        this.portID = portID
+    }
 
-  analysers () {
-    return Analysers.createFromPort(this.opClient, this.portID)
-  }
+    analysers () {
+        return Analysers.createFromPort(this.opClient, this.portID)
+    }
 
-  generators () {
-    return Generators.createFromPort(this.opClient, this.portID)
-  }
+    generators () {
+        return Generators.createFromPort(this.opClient, this.portID)
+    }
 }
 
 module.exports.Ports = Ports
