@@ -54,6 +54,13 @@ class OpenPerfClient {
                         reason: 'response ' + res.status + ': ' + x
                     }))
                 }
+                /* 204 does not expects JSON body */
+                if (expect === 204) {
+                    return res.text().then(x => ({
+                        status: 'ok',
+                        data: x
+                    }))
+                }
                 return res.json().then(x => ({
                     status: 'ok',
                     data: x
@@ -61,7 +68,7 @@ class OpenPerfClient {
             })
             .then(x => {
                 if (x.status !== 'ok') {
-                    throw (x.reason)
+                    throw (new Error(x.reason))
                 }
                 return x.data
             })

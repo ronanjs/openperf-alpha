@@ -3,5 +3,4 @@
 # OpenPerf Alpha Samples
 
 
-[]OpenPerf(https://github.com/Spirent/openperf/) One way latency measurement scripts in NodeJS
- 
+[OpenPerf](https://github.com/Spirent/openperf/) One way latency measurement scripts in NodeJS

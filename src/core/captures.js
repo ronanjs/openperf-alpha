@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:33:24
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 08:57:24
+* @Last Modified time: 2020-10-22 08:38:28
 */
 
 const chalk = require('chalk')
@@ -91,7 +91,7 @@ class Capture {
 
     stop () {
         console.log('Stopping capture', this.captureID)
-        return this.opClient.post('packet/captures/' + this.captureID + '/stop', null, 201)
+        return this.opClient.post('packet/captures/' + this.captureID + '/stop', null, 204)
             .catch(e => {
                 console.error('***failed to stop the capture*** :', e)
             })

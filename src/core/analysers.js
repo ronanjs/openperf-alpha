@@ -2,11 +2,10 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 09:21:40
+* @Last Modified time: 2020-10-22 09:52:18
 */
 
 const chalk = require('chalk')
-const { wait } = require('./utils')
 
 class Analysers {
     constructor (opClient, sourceID) {
@@ -91,19 +90,27 @@ class Analyser {
 
     stop () {
         console.log('Stopping analyser ', this.analyserID)
-        return this.opClient.post('packet/analyzers/' + this.analyserID + '/stop', null, 201)
+        return this.opClient.post('packet/analyzers/' + this.analyserID + '/stop', null, 204)
             .catch(e => {
                 console.error('***failed to stop the analyser*** :', e)
+            })
+    }
+
+    reset () {
+        return this.opClient.post('packet/analyzers/' + this.analyserID + '/reset', null, 201)
+            .then(ana => {
+                /* A new internval analyser is created upon reset */
+                this.internalID = ana.id
+            })
+            .catch(e => {
+                console.error('***failed to reset the analyser*** :', e)
             })
     }
 
     delete () {
         return this.stop().then(() => {
             console.log('Deleting analyser ', this.analyserID)
-            return this.opClient.delete('packet/analyzers/' + this.analyserID).then(() => {
-                console.log('Analyser ' + this.analyserID + ' is now deleted...')
-                return wait(500)
-            })
+            return this.opClient.delete('packet/analyzers/' + this.analyserID)
         })
     }
 }

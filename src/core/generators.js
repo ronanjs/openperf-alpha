@@ -2,11 +2,10 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 13:45:58
+* @Last Modified time: 2020-10-22 09:52:23
 */
 
 const chalk = require('chalk')
-const { wait } = require('./utils')
 
 class Generators {
     constructor (opClient, targetID) {
@@ -134,14 +133,20 @@ class Generator {
 
     start () {
         return this.opClient.post('packet/generators/' + this.genID + '/start', null, 201)
+            .then(x => {
+                return true
+            })
             .catch(e => {
-                console.error('***failed to start the generator*** :', e)
+                if (e.toString().indexOf('reason: socket hang up') < 0) {
+                    console.error('***failed to start the generator*** :', e.toString())
+                }
+                return false
             })
     }
 
     stop () {
         console.log('Stopping generator ', this.genID)
-        return this.opClient.post('packet/generators/' + this.genID + '/stop', null, 201)
+        return this.opClient.post('packet/generators/' + this.genID + '/stop', null, 204)
             .catch(e => {
                 console.error('***failed to stop the generator*** :', e)
             })
@@ -150,10 +155,7 @@ class Generator {
     delete () {
         return this.stop().then(() => {
             console.log('Deleting generator ', this.genID)
-            return this.opClient.delete('packet/generators/' + this.genID).then(x => {
-                console.log('Generator ' + this.genID + ' is now deleted...')
-                return wait(500)
-            })
+            return this.opClient.delete('packet/generators/' + this.genID)
         })
     }
 }
