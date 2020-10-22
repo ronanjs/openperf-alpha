@@ -1,5 +1,13 @@
 
 
+# Topology
+
+Host0: 10.65.116.54
+Host1: 10.65.116.38
+
+NTP0: 192.168.10.97
+NTP1: 192.168.10.98
+
 # Pre-setup
 
 Load the kernel module for `vfio-pci`
@@ -64,7 +72,18 @@ sudo ip link set enp3s0f1 down
 ```
 
 ```
+sudo modprobe vfio-pci
 sudo /home/spirent/openperf/openperf/deps/dpdk/usertools/dpdk-devbind.py -b vfio-pci 0000:03:00.1
+sudo /home/spirent/openperf/openperf/deps/dpdk/usertools/dpdk-devbind.py -s
+```
+
+Alternatively: 
+
+```
+sudo modprobe uio_pci_generic
+sudo ip link set enp3s0f1 down
+sudo /home/spirent/openperf/openperf/deps/dpdk/usertools/dpdk-devbind.py -u 0000:03:00.1
+sudo /home/spirent/openperf/openperf/deps/dpdk/usertools/dpdk-devbind.py -b uio_pci_generic 0000:03:00.1
 ```
 
 # Open Perf Host 0
@@ -96,8 +115,14 @@ modules:
 sudo ~/op/openperf -c /etc/openperf/config.yaml
 ```
 
+or 
+
+```
+echo "(while true; do sudo ~/op/openperf -c /etc/openperf/config.yaml; done)" > ~/op/run.sh
+```
+
 # Run
 
 ```
-node src/single-flow.js 10.61.34.10 10.61.34.11
+node src/single-flow.js 10.65.116.54 10.65.116.38
 ```

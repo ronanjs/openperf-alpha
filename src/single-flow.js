@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:33:42
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 11:24:10
+* @Last Modified time: 2020-10-22 08:14:10
 */
 
 const chalk = require('chalk')
@@ -20,10 +20,10 @@ async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
     await Promise.all([genClient.check(), anaClient.check()])
 
     const genTimesources = new TimeSources(genClient)
-    await genTimesources.create('timesource-gen-01', '10.61.34.17')
+    await genTimesources.create('timesource-gen-01', '192.168.10.97')
 
     const anaTimesources = new TimeSources(anaClient)
-    await anaTimesources.create('timesource-ana-01', '10.61.34.17')
+    await anaTimesources.create('timesource-ana-01', '192.168.10.98')
 
     const genPort = await genClient.ports().get(genPortID)
     const anaPort = await anaClient.ports().get(anaPortID)
@@ -32,11 +32,11 @@ async function run (genServerIP, genPortID, anaServerIP, anaPortID) {
     // const cap2 = await Captures.createFromPort(anaClient, anaPort).create('capture-ana-01')
     // if (!cap1 || !cap2) return
 
-    const ana = await anaPort.analysers().create('analyser-01')
-    if (!ana) return
-
     const gen = await genPort.generators().create('generator-01')
     if (!gen) return
+
+    const ana = await anaPort.analysers().create('analyser-01')
+    if (!ana) return
 
     // await cap1.start()
     // await cap2.start()

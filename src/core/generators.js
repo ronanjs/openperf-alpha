@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-21 11:20:07
+* @Last Modified time: 2020-10-21 13:45:58
 */
 
 const chalk = require('chalk')
@@ -37,20 +37,20 @@ class Generators {
         await this.delete(id)
 
         const ethernet = {
-            source: '00:10:94:01:1a:21',
-            destination: '00:10:94:01:1a:22'
+            source: '00:10:f3:83:67:b2',
+            destination: '00:1b:cd:03:04:4d'
         }
         const ipv4 = {
-            source: '198.19.1.2',
-            destination: '198.19.1.1',
+            source: '192.18.1.1',
+            destination: '192.19.1.2',
             header_length: 20,
             protocol: 254,
             time_to_live: 64,
             version: 4
         }
         const udp = {
-            destination: 3357,
-            source: 3357
+            destination: 80,
+            source: 80
         }
 
         const traffic = {
