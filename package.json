@@ -8,7 +8,7 @@
     "node-fetch": "^2.6.1",
     "table": "^6.0.3"
   },
-    "eslintConfig": {
+  "eslintConfig": {
     "rules": {
       "indent": [
         "error",
