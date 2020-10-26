@@ -8,15 +8,19 @@
     "node-fetch": "^2.6.1",
     "table": "^6.0.3"
   },
-  "devDependencies": {
-    "standardx": "^5.0.0"
-  },
-  "eslintConfig": {
+    "eslintConfig": {
     "rules": {
       "indent": [
         "error",
         4
       ]
     }
+  },
+  "devDependencies": {
+    "standardx": "^5.0.0"
+  },
+  "scripts": {
+    "pretest": "eslint --ignore-path .gitignore .",
+    "test": "standardx -v"
   }
 }
