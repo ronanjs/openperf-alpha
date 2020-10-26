@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-26 08:24:46
+* @Last Modified time: 2020-10-26 09:17:28
 */
 
 const chalk = require('chalk')
@@ -22,7 +22,9 @@ class Generators {
   }
 
   exists (id) {
-    return this.list().then(generators => generators.map(x => x.id).indexOf(id) >= 0)
+    return this.list().then(generators => {
+      return generators.map(x => x.id).indexOf(id) >= 0
+    })
   }
 
   delete (id) {

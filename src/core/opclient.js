@@ -2,6 +2,9 @@
 const chalk = require('chalk')
 const fetch = require('node-fetch')
 const { Ports } = require('./ports')
+const { TimeSources } = require('./timesource')
+
+const debug = false
 
 class OpenPerfClient {
   constructor (serverIP) {
@@ -22,7 +25,12 @@ class OpenPerfClient {
     return new Ports(this)
   }
 
+  timesources () {
+    return new TimeSources(this)
+  }
+
   get (url) {
+    if (debug) console.log('GET', url)
     return fetch(this.server + url).then(x => {
       if (x.status !== 200) {
         throw (new Error("Invalid response '" + x.status + "' for '" + url + "'"))
@@ -32,6 +40,7 @@ class OpenPerfClient {
   }
 
   delete (url) {
+    if (debug) console.log('DELETE', url)
     return fetch(this.server + url, {
       method: 'DELETE'
     }).then(x => {
@@ -40,7 +49,7 @@ class OpenPerfClient {
   }
 
   post (url, body, expect) {
-    // console.log("POST",url)
+    if (debug) console.log('POST', url)
     return fetch(this.server + url, {
       method: 'post',
       body: body && JSON.stringify(body),
