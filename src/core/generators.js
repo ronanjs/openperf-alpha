@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-26 09:17:28
+* @Last Modified time: 2020-10-27 10:24:44
 */
 
 const chalk = require('chalk')
@@ -38,45 +38,11 @@ class Generators {
     return this.exists(id).then(x => x && new Generator(this.opClient, id))
   }
 
-  async create (id) {
+  async create (id, opts = {}) {
     await this.delete(id)
 
-    const ethernet = {
-      source: '00:10:f3:83:67:b2',
-      destination: '00:1b:cd:03:04:4d'
-    }
-    const ipv4 = {
-      source: '192.18.1.1',
-      destination: '192.19.1.2',
-      header_length: 20,
-      protocol: 254,
-      time_to_live: 64,
-      version: 4
-    }
-    const udp = {
-      destination: 80,
-      source: 80
-    }
-
-    const traffic = {
-      length: {
-        fixed: 512
-      },
-      signature: {
-        stream_id: 0x1000,
-        latency: 'start_of_frame'
-      },
-      packet: {
-        modifier_tie: 'zip',
-        protocols: [{
-          ethernet
-        }, {
-          ipv4
-        }, {
-          udp
-        }]
-      },
-      weight: 1
+    if (!opts.traffic) {
+      throw (new Error('You must specific traffic to be generated in the options'))
     }
 
     const body = {
@@ -89,7 +55,7 @@ class Generators {
         duration: {
           continuous: true
         },
-        load: {
+        load: opts.load || {
           burst_size: 1,
           rate: {
             period: 'seconds',
@@ -97,12 +63,12 @@ class Generators {
           },
           units: 'frames'
         },
-        traffic: [traffic]
+        traffic: [opts.traffic]
       }
     }
 
     return this.opClient.post('packet/generators', body, 201).then(x => {
-      console.log('[generator ' + chalk.red(id) + '] created')
+      // console.log('[generator ' + chalk.red(id) + '] created')
       return new Generator(this.opClient, id)
     }).catch(e => {
       console.log('[generator ' + chalk.red(id) + '] *** failed to create **** ', e)
@@ -118,30 +84,36 @@ class Generator {
   }
 
   init () {
-    if (this.internalID) return
+    if (this.internalID) return Promise.resolve(this.internalID)
 
     /* Check the generator-result ID */
     return this.opClient.get('packet/generator-results').then(x => {
-      // console.log("Generator results:",x)
-      const gen = x.filter(x => x.generator_id === this.genID)[0]
-      this.internalID = gen.id
+      const gen = x.filter(x => x.generator_id === this.genID)
+      if (gen.length === 0) {
+        return null
+      }
+      this.internalID = gen[0].id
       this.flows = gen.flows
-      return this
+      return this.internalID
     })
   }
 
-  async results () {
-    await this.init()
-
-    return this.opClient.get('packet/generator-results/' + this.internalID).then(x => {
-      return { protocol: x.protocol_counters }
+  results () {
+    return this.init().then(id => {
+      if (!id) return null
+      return this.opClient.get('packet/generator-results/' + id).then(x => {
+        return { protocol: x.protocol_counters, flows: x.flows }
+      })
+    }).catch(e => {
+      console.log('[generator ' + chalk.red(this.genID) + '] *** failed to get the results **** ', e)
+      return null
     })
   }
 
   start () {
     return this.opClient.post('packet/generators/' + this.genID + '/start', null, 201)
       .then(x => {
-        console.log('[generator ' + chalk.red(this.genID) + '] started')
+        // console.log('[generator ' + chalk.red(this.genID) + '] started')
         return true
       })
       .catch(e => {
@@ -159,7 +131,9 @@ class Generator {
         return true
       })
       .catch(e => {
-        console.log('[generator ' + chalk.red(this.genID) + '] *** failed to stop **** ', e)
+        if (e.toString().indexOf('reason: socket hang up') < 0) {
+          console.log('[generator ' + chalk.red(this.genID) + '] *** failed to stop **** ', e)
+        }
         return false
       })
   }

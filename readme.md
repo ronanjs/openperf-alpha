@@ -34,3 +34,35 @@ generator:[ tx: 73   analyser:[ rx: 7   latency(µs):1.4   ->1.5     jitter(µs)
 generator:[ tx: 81   analyser:[ rx: 8   latency(µs):1.4   ->1.5     jitter(µs):-0.1  ->0.1
 generator:[ tx: 89   analyser:[ rx: 8   latency(µs):1.4   ->2.2     jitter(µs):-0.1  ->0.8
 ```
+
+In order to configure the traffic pattern, you need to edit the file [traffic-config.yaml](traffic-config.yaml). It contains information about the load (currently 10 packets per second) as well as the frame traffic (currently ETH/IP/UDP):
+
+
+```yaml
+---
+load:
+  burst_size: 1
+  rate:
+    period: seconds
+    value: 100
+  units: frames
+
+traffic:
+  length:
+    fixed: 512
+  signature:
+    stream_id: 1
+    latency: start_of_frame
+  packet:
+    modifier_tie: zip
+    protocols:
+    - ethernet:
+        source: 00:10:f3:83:67:b2
+        destination: 00:1b:cd:03:04:4d
+    - ipv4:
+        destination: 192.18.1.2
+        source: 192.18.1.1
+    - udp:
+        destination: 80
+        source: 80
+```

@@ -1,0 +1,26 @@
+---
+load:
+  burst_size: 1
+  rate:
+    period: seconds
+    value: 100
+  units: frames
+
+traffic:
+  length:
+    fixed: 512
+  signature:
+    stream_id: 1
+    latency: start_of_frame
+  packet:
+    modifier_tie: zip
+    protocols:
+    - ethernet:
+        source: 00:10:f3:83:67:b2
+        destination: 00:1b:cd:03:04:4d
+    - ipv4:
+        destination: 192.18.1.2
+        source: 192.18.1.1
+    - udp:
+        destination: 80
+        source: 80

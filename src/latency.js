@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-26 09:25:03
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-26 09:26:23
+* @Last Modified time: 2020-10-27 10:20:22
 */
 
 const chalk = require('chalk')
@@ -32,8 +32,8 @@ async function testOneWayLatency (genPromise, anaPromise) {
     ])
 
     console.log(
-      'generator:[', 'tx:', genres.protocol.ip.ipv4.toString().padEnd(4),
-      'analyser:[', 'rx:', anares.protocol.ip.ipv4.toString().padEnd(3),
+      'generator:[', 'tx:', genres.protocol.ip.ipv4.toString().padEnd(4), ']',
+      'analyser:[', 'rx:', anares.protocol.ip.ipv4.toString().padEnd(3), ']',
       format('latency', anares.flow.latency.summary),
       format('jitter', anares.flow.jitter_ipdv.summary)
     )

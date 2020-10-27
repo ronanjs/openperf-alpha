@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-26 09:07:22
+ * @Last Modified time: 2020-10-27 10:10:56
  */
 
 const { OpenPerfClient } = require('./core/opclient')
@@ -27,7 +27,7 @@ class OpenPerfNode {
 
     if (opts.timesource) {
       const timesources = this.client.timesources()
-      this.timesource = await timesources.create('timesource-01', opts.timesource)
+      this.timesource = await timesources.create('timesource-001', opts.timesource)
     }
 
     const port = await this.client.ports().get(portID)
@@ -36,7 +36,7 @@ class OpenPerfNode {
     }
 
     const operators = port[mode + 's']()
-    const operator = await operators.create(mode + '-01')
+    const operator = await operators.create(opts.id || (mode + '-001'), opts)
     if (!operator) {
       return null
     }

@@ -1,8 +1,12 @@
-
 const chalk = require('chalk')
 const fetch = require('node-fetch')
-const { Ports } = require('./ports')
-const { TimeSources } = require('./timesource')
+const AbortController = require('abort-controller')
+const {
+  Ports
+} = require('./ports')
+const {
+  TimeSources
+} = require('./timesource')
 
 const debug = false
 
@@ -13,7 +17,7 @@ class OpenPerfClient {
 
   check () {
     return fetch(this.server + 'version').then(x => x.json()).then(x => {
-      // console.log('Using OpenPerf ' + this.server + ' version ' + chalk.blue(x.version) + ' built on ' + x.build_time)
+      if (debug) console.log('Using OpenPerf ' + this.server + ' version ' + chalk.blue(x.version) + ' built on ' + x.build_time)
       return x
     }).catch(e => {
       console.log(chalk.red('** Failed to connect to OpenPerf on ' + this.server + ' ** \n'), e.toString())
@@ -30,8 +34,16 @@ class OpenPerfClient {
   }
 
   get (url) {
+    const controller = new AbortController()
+    const signal = controller.signal
+    setTimeout(() => {
+      controller.abort()
+    }, 30000)
+
     if (debug) console.log('GET', url)
-    return fetch(this.server + url).then(x => {
+    return fetch(this.server + url, {
+      signal
+    }).then(x => {
       if (x.status !== 200) {
         throw (new Error("Invalid response '" + x.status + "' for '" + url + "'"))
       }
@@ -40,18 +52,30 @@ class OpenPerfClient {
   }
 
   delete (url) {
+    const controller = new AbortController()
+    const signal = controller.signal
+    setTimeout(() => {
+      controller.abort()
+    }, 30000)
     if (debug) console.log('DELETE', url)
     return fetch(this.server + url, {
-      method: 'DELETE'
+      method: 'DELETE',
+      signal
     }).then(x => {
       if (x.status !== 204) throw (new Error('failed'))
     })
   }
 
   post (url, body, expect) {
+    const controller = new AbortController()
+    const signal = controller.signal
+    setTimeout(() => {
+      controller.abort()
+    }, 30000)
     if (debug) console.log('POST', url)
     return fetch(this.server + url, {
       method: 'post',
+      signal,
       body: body && JSON.stringify(body),
       headers: {
         accept: 'application/json',

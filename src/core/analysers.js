@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-26 08:21:58
+* @Last Modified time: 2020-10-27 09:41:17
 */
 
 const chalk = require('chalk')
@@ -53,7 +53,9 @@ class Analysers {
       console.log('[analyser ' + chalk.red(id) + '] created')
       return new Analyser(this.opClient, id)
     }).catch(e => {
-      console.error('***failed to create the analyser ' + id + '*** :', e)
+      if (e.toString().indexOf('reason: socket hang up') < 0) {
+        console.error('***failed to create the analyser ' + id + '*** :', e)
+      }
       throw (new Error('Can not create the analyser: ' + e.toString()))
     })
   }
@@ -81,8 +83,11 @@ class Analyser {
   results () {
     return this.init().then(() => {
       return this.opClient.get('packet/analyzer-results/' + this.internalID).then(x => {
-        return { protocol: x.protocol_counters, flow: x.flow_counters }
+        return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
       })
+    }).catch(e => {
+      console.log('[analyser ' + chalk.red(this.genID) + '] *** failed to get the results **** ', e)
+      return null
     })
   }
 
@@ -104,7 +109,9 @@ class Analyser {
         return true
       })
       .catch(e => {
-        console.log('[analyser ' + chalk.red(this.analyserID) + '] *** failed to stop *** ', e)
+        if (e.toString().indexOf('reason: socket hang up') < 0) {
+          console.log('[analyser ' + chalk.red(this.analyserID) + '] *** failed to stop *** ', e)
+        }
         return false
       })
   }
@@ -113,7 +120,9 @@ class Analyser {
     return this.opClient.post('packet/analyzers/' + this.analyserID + '/reset', null, 201)
       .then(ana => {
         /* A new internval analyser is created upon reset */
+        const oldID = this.internalID
         this.internalID = ana.id
+        this.opClient.delete('packet/analyzer-results/' + oldID)
         return true
       })
       .catch(e => {
