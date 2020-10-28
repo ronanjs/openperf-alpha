@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-28 08:56:48
+ * @Last Modified time: 2020-10-28 17:49:51
  */
 
 const { OpenPerfClient } = require('./core/opclient')
@@ -13,14 +13,18 @@ class OpenPerfNode {
   }
 
   static newGenerator (serverIP, portID, opts = {}) {
-    return new OpenPerfNode(serverIP).init('generator', portID, opts)
+    return new OpenPerfNode(serverIP).new('generator', portID, opts)
   }
 
   static newAnalyser (serverIP, portID, opts = {}) {
-    return new OpenPerfNode(serverIP).init('analyser', portID, opts)
+    return new OpenPerfNode(serverIP).new('analyser', portID, opts)
   }
 
-  async init (mode, portID, opts) {
+  restart () {
+    return this.client.monitor.restart()
+  }
+
+  async new (mode, portID, opts) {
     if (opts.debug) this.client.debug = true
     if (!await this.client.check()) {
       return null

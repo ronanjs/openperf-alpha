@@ -12,6 +12,7 @@ class OpenPerfClient {
   constructor (serverIP) {
     this.server = 'http://' + serverIP + ':9000/'
     this.debug = false
+    this.monitor = new Monitor(serverIP)
   }
 
   check () {
@@ -106,6 +107,42 @@ class OpenPerfClient {
         }
         return x.data
       })
+  }
+}
+
+class Monitor {
+  constructor (serverIP) {
+    this.serverIP = serverIP
+    this.server = 'http://' + serverIP + ':8080/'
+    this.init = fetch(this.server + 'monitor').then(x => {
+      return x.status === 200
+    }).catch(e => false)
+  }
+
+  restart () {
+    return this.init.then(available => {
+      if (!available) {
+        console.log('[rest] Restart OpenPerf instance ' + this.serverIP + ': no monitor available')
+        return false
+      }
+      return fetch(this.server + 'kill').then(x => x.json()).then(x => {
+        console.log('[rest] Restart OpenPerf instance ' + this.serverIP + ': ' + x)
+        return x === 'ok'
+      }).catch(e => {
+        return false
+      })
+    })
+  }
+
+  resource (what) {
+    return this.init.then(available => {
+      if (!available) return 'n/a'
+      return fetch(this.server + 'monitor').then(x => x.json()).then(x => {
+        if (x.status === 'ok') return x.data[what]; return '-'
+      }).catch(e => {
+        return 'x'
+      })
+    })
   }
 }
 
