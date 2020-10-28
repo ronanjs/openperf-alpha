@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-27 09:41:17
+* @Last Modified time: 2020-10-28 09:11:21
 */
 
 const chalk = require('chalk')
@@ -50,12 +50,10 @@ class Analysers {
     }
 
     return this.opClient.post('packet/analyzers', body, 201).then(x => {
-      console.log('[analyser ' + chalk.red(id) + '] created')
+      console.log('[analyser ' + chalk.green(id) + '] created')
       return new Analyser(this.opClient, id)
     }).catch(e => {
-      if (e.toString().indexOf('reason: socket hang up') < 0) {
-        console.error('***failed to create the analyser ' + id + '*** :', e)
-      }
+      console.error(chalk.red('***failed to create the analyser ' + id + '*** :'), e.toString())
       throw (new Error('Can not create the analyser: ' + e.toString()))
     })
   }
@@ -94,7 +92,7 @@ class Analyser {
   start () {
     return this.opClient.post('packet/analyzers/' + this.analyserID + '/start', null, 201)
       .then(() => {
-        console.log('[analyser ' + chalk.red(this.analyserID) + '] started')
+        console.log('[analyser ' + chalk.green(this.analyserID) + '] started')
         return true
       })
       .catch(e => {
@@ -105,13 +103,11 @@ class Analyser {
   stop () {
     return this.opClient.post('packet/analyzers/' + this.analyserID + '/stop', null, 204)
       .then(() => {
-        console.log('[analyser ' + chalk.red(this.analyserID) + '] stopped')
+        console.log('[analyser ' + chalk.green(this.analyserID) + '] stopped')
         return true
       })
       .catch(e => {
-        if (e.toString().indexOf('reason: socket hang up') < 0) {
-          console.log('[analyser ' + chalk.red(this.analyserID) + '] *** failed to stop *** ', e)
-        }
+        console.log('[analyser ' + chalk.green(this.analyserID) + '] ' + chalk.red('*** failed to stop *** '), e.toString())
         return false
       })
   }
@@ -133,7 +129,7 @@ class Analyser {
 
   delete () {
     return this.stop().then(() => {
-      console.log('[analyser ' + chalk.red(this.analyserID) + '] deleted')
+      console.log('[analyser ' + chalk.green(this.analyserID) + '] deleted')
       return this.opClient.delete('packet/analyzers/' + this.analyserID)
     })
   }

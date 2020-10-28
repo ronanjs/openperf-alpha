@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:30:12
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-27 10:24:44
+* @Last Modified time: 2020-10-28 09:16:30
 */
 
 const chalk = require('chalk')
@@ -48,7 +48,7 @@ class Generators {
     const body = {
       id: id,
       target_id: this.targetID,
-      active: true,
+      active: false,
       config: {
         order: 'round-robin',
         protocol_counters: ['ethernet', 'ip', 'transport'],
@@ -105,7 +105,7 @@ class Generator {
         return { protocol: x.protocol_counters, flows: x.flows }
       })
     }).catch(e => {
-      console.log('[generator ' + chalk.red(this.genID) + '] *** failed to get the results **** ', e)
+      console.log('[generator ' + chalk.green(this.genID) + '] ' + chalk.red('*** failed to get the results *** '), e.toString())
       return null
     })
   }
@@ -113,13 +113,11 @@ class Generator {
   start () {
     return this.opClient.post('packet/generators/' + this.genID + '/start', null, 201)
       .then(x => {
-        // console.log('[generator ' + chalk.red(this.genID) + '] started')
+        // console.log('[generator ' + chalk.green(this.genID) + '] started')
         return true
       })
       .catch(e => {
-        if (e.toString().indexOf('reason: socket hang up') < 0) {
-          console.log('[generator ' + chalk.red(this.genID) + '] *** failed to start **** ', e)
-        }
+        console.log('[generator ' + chalk.green(this.genID) + '] ' + chalk.red('*** failed to start *** '), e.toString())
         return false
       })
   }
@@ -127,13 +125,11 @@ class Generator {
   stop () {
     return this.opClient.post('packet/generators/' + this.genID + '/stop', null, 204)
       .then(() => {
-        console.log('[generator ' + chalk.red(this.genID) + '] stopped')
+        console.log('[generator ' + chalk.green(this.genID) + '] stopped')
         return true
       })
       .catch(e => {
-        if (e.toString().indexOf('reason: socket hang up') < 0) {
-          console.log('[generator ' + chalk.red(this.genID) + '] *** failed to stop **** ', e)
-        }
+        console.log('[generator ' + chalk.green(this.genID) + '] ' + chalk.red('*** failed to stop *** '), e.toString())
         return false
       })
   }
@@ -141,7 +137,7 @@ class Generator {
   delete () {
     return this.stop().then(() => {
       return this.opClient.delete('packet/generators/' + this.genID).then(x => {
-        console.log('[generator ' + chalk.red(this.genID) + '] deleted')
+        console.log('[generator ' + chalk.green(this.genID) + '] deleted')
         return true
       })
     })

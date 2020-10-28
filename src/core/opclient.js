@@ -8,16 +8,15 @@ const {
   TimeSources
 } = require('./timesource')
 
-const debug = false
-
 class OpenPerfClient {
   constructor (serverIP) {
     this.server = 'http://' + serverIP + ':9000/'
+    this.debug = false
   }
 
   check () {
     return fetch(this.server + 'version').then(x => x.json()).then(x => {
-      if (debug) console.log('Using OpenPerf ' + this.server + ' version ' + chalk.blue(x.version) + ' built on ' + x.build_time)
+      if (this.debug) console.log('[rest] Using OpenPerf ' + this.server + ' version ' + chalk.blue(x.version) + ' built on ' + x.build_time)
       return x
     }).catch(e => {
       console.log(chalk.red('** Failed to connect to OpenPerf on ' + this.server + ' ** \n'), e.toString())
@@ -40,7 +39,7 @@ class OpenPerfClient {
       controller.abort()
     }, 30000)
 
-    if (debug) console.log('GET', url)
+    if (this.debug) console.log('[rest] GET', url)
     return fetch(this.server + url, {
       signal
     }).then(x => {
@@ -57,7 +56,7 @@ class OpenPerfClient {
     setTimeout(() => {
       controller.abort()
     }, 30000)
-    if (debug) console.log('DELETE', url)
+    if (this.debug) console.log('[rest] DELETE', url)
     return fetch(this.server + url, {
       method: 'DELETE',
       signal
@@ -72,7 +71,7 @@ class OpenPerfClient {
     setTimeout(() => {
       controller.abort()
     }, 30000)
-    if (debug) console.log('POST', url)
+    if (this.debug) console.log('[rest] POST', url)
     return fetch(this.server + url, {
       method: 'post',
       signal,

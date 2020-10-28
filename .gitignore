@@ -4,3 +4,4 @@ doc/*local*
 Makefile.local
 src/scale*
 yarn-error.log
+/analytics

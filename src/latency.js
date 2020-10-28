@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-26 09:25:03
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-27 10:20:22
+* @Last Modified time: 2020-10-28 09:07:18
 */
 
 const chalk = require('chalk')
@@ -16,13 +16,16 @@ const format = (name, x) =>
             ' '
 
 async function testOneWayLatency (genPromise, anaPromise) {
-  const [gen, ana] = await Promise.all([genPromise, anaPromise])
-  if (!ana || !gen) return
+  const [gen, ana] = await Promise.all([genPromise, anaPromise]).catch(e => [])
+  if (!ana || !gen) {
+    console.log(chalk.blue('failed to create the generator or analyser... aborting'))
+    return -1
+  }
 
   await ana.start()
   if (!await gen.start()) {
     console.log('Sorry... failed to start the generator.. please try again')
-    return
+    return -1
   }
 
   while (true) {

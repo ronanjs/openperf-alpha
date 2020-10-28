@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-27 10:10:56
+ * @Last Modified time: 2020-10-28 08:56:48
  */
 
 const { OpenPerfClient } = require('./core/opclient')
@@ -21,6 +21,7 @@ class OpenPerfNode {
   }
 
   async init (mode, portID, opts) {
+    if (opts.debug) this.client.debug = true
     if (!await this.client.check()) {
       return null
     }
@@ -36,7 +37,7 @@ class OpenPerfNode {
     }
 
     const operators = port[mode + 's']()
-    const operator = await operators.create(opts.id || (mode + '-001'), opts)
+    const operator = await operators.create(opts.id || (mode + '-001'), opts[mode])
     if (!operator) {
       return null
     }

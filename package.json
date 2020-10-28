@@ -6,6 +6,7 @@
   "dependencies": {
     "abort-controller": "^3.0.0",
     "chalk": "^4.1.0",
+    "commander": "^6.2.0",
     "js-yaml": "^3.14.0",
     "node-fetch": "^2.6.1",
     "table": "^6.0.3"
