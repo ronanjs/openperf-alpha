@@ -13,14 +13,13 @@ traffic:
     stream_id: 1
     latency: start_of_frame
   packet:
-    modifier_tie: zip
     protocols:
     - ethernet:
         source: 00:10:f3:83:67:b2
-        destination: 00:1b:cd:03:04:4d
+        destination: 00:00:55:06:44:fe
     - ipv4:
-        destination: 192.18.1.2
-        source: 192.18.1.1
+        destination: 10.61.36.222
+        source: 192.168.224.221
     - udp:
         destination: 80
         source: 80
