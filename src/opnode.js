@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-28 17:49:51
+ * @Last Modified time: 2020-10-29 11:26:36
  */
 
 const { OpenPerfClient } = require('./core/opclient')
@@ -10,6 +10,12 @@ const { OpenPerfClient } = require('./core/opclient')
 class OpenPerfNode {
   constructor (serverIP) {
     this.client = new OpenPerfClient(serverIP)
+  }
+
+  static async create (serverIP, portID, opts = {}) {
+    const node = new OpenPerfNode(serverIP)
+    const check = await node.client.check()
+    return check ? node : null
   }
 
   static newGenerator (serverIP, portID, opts = {}) {
