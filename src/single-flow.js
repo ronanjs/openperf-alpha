@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-30 12:36:21
+ * @Last Modified time: 2020-10-30 13:49:05
  */
 
 const { Command } = require('commander')
@@ -30,8 +30,7 @@ program
       const ana = OpenPerfNode.newAnalyser(genIP, 'port1', { debug: cmd.debug })
       res = testOneWayLatency(gen, ana, log)
     } else {
-      generatorConfig.timesource = '192.168.10.97'
-      const gen = OpenPerfNode.newGenerator(genIP, 'port0', { generator: generatorConfig, debug: cmd.debug })
+      const gen = OpenPerfNode.newGenerator(genIP, 'port0', { timesource: '192.168.10.97', generator: generatorConfig, debug: cmd.debug })
       const ana = OpenPerfNode.newAnalyser(anaIP, 'port0', { timesource: '192.168.10.98', debug: cmd.debug })
       res = testOneWayLatency(gen, ana, log)
     }

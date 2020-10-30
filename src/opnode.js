@@ -2,10 +2,11 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-29 11:26:36
+ * @Last Modified time: 2020-10-30 13:47:59
  */
 
 const { OpenPerfClient } = require('./core/opclient')
+const chalk = require('chalk')
 
 class OpenPerfNode {
   constructor (serverIP) {
@@ -39,6 +40,7 @@ class OpenPerfNode {
     if (opts.timesource) {
       const timesources = this.client.timesources()
       this.timesource = await timesources.create('timesource-001', opts.timesource)
+      console.log('Using timesource ' + chalk.blue(opts.timesource) + ' for the ' + mode + ' ' + this.client.server)
     }
 
     const port = await this.client.ports().get(portID)
