@@ -2,11 +2,12 @@
 * @Author: ronanjs
 * @Date:   2020-10-26 09:25:03
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-28 09:07:18
+* @Last Modified time: 2020-10-30 12:48:12
 */
 
 const chalk = require('chalk')
 const { wait } = require('./core/utils')
+const fs = require('fs')
 
 const format = (name, x) =>
   chalk.blue(name) + '(µs):' +
@@ -15,7 +16,7 @@ const format = (name, x) =>
             ((Math.round(x.max / 100) / 10).toString()).padEnd(6) +
             ' '
 
-async function testOneWayLatency (genPromise, anaPromise) {
+async function testOneWayLatency (genPromise, anaPromise, logfile) {
   const [gen, ana] = await Promise.all([genPromise, anaPromise]).catch(e => [])
   if (!ana || !gen) {
     console.log(chalk.blue('failed to create the generator or analyser... aborting'))
@@ -28,10 +29,18 @@ async function testOneWayLatency (genPromise, anaPromise) {
     return -1
   }
 
+  try {
+    if (logfile) {
+      fs.unlinkSync(logfile)
+    }
+  } catch (e) {}
+
   while (true) {
-    const [genres, anares] = await Promise.all([
+    const [genres, anares, gents, anats] = await Promise.all([
       gen.operator.results(),
-      ana.operator.results()
+      ana.operator.results(),
+      gen.timesource && gen.timesource.keeper(),
+      ana.timesource && ana.timesource.keeper()
     ])
 
     console.log(
@@ -40,6 +49,18 @@ async function testOneWayLatency (genPromise, anaPromise) {
       format('latency', anares.flow.latency.summary),
       format('jitter', anares.flow.jitter_ipdv.summary)
     )
+
+    if (logfile) {
+      const cols = {
+        time: Date.now(),
+        tx: genres.protocol.ip.ipv4,
+        rx: anares.protocol.ip.ipv4,
+        latency: anares.flow.latency,
+        jitter: anares.flow.jitter_ipdv.summary,
+        timesource: { gen: gents, ana: anats }
+      }
+      fs.appendFile(logfile, JSON.stringify(cols) + '\n', () => {})
+    }
 
     ana.operator.reset()
     await wait(200)

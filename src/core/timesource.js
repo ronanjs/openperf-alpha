@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:31:11
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-26 08:18:53
+* @Last Modified time: 2020-10-30 12:46:48
 */
 
 // const { dump } = require('./utils')
@@ -54,6 +54,11 @@ class TimeSource {
       .catch(e => {
         throw (new Error("No timesource '" + this.id + "'"))
       })
+  }
+
+  keeper () {
+    return this.opClient.get('time-keeper')
+      .then(x => ({ state: x.state, stats: x.stats }))
   }
 }
 
