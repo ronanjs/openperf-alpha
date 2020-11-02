@@ -55,7 +55,8 @@ class OpenPerfClient {
   get (url) {
     const controller = new AbortController()
     const signal = controller.signal
-    setTimeout(() => {
+    const timer = setTimeout(() => {
+      console.log('Aborting...', url)
       controller.abort()
     }, 30000)
 
@@ -63,6 +64,7 @@ class OpenPerfClient {
     return fetch(this.server + url, {
       signal
     }).then(x => {
+      clearTimeout(timer)
       if (x.status !== 200) {
         throw (new Error("Invalid response '" + x.status + "' for '" + url + "'"))
       }

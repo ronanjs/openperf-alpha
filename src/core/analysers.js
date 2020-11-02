@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-11-02 09:36:45
+* @Last Modified time: 2020-11-02 16:48:18
 */
 
 const chalk = require('chalk')
@@ -85,15 +85,13 @@ class Analyser {
       //   return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
       // })
 
-      return this.opClient.get('packet/analyzer-results/' ).then(results => {
-        return results.filter(x=>x.analyzer_id==this.analyserID).map(x=>{
+      return this.opClient.get('packet/analyzer-results/').then(results => {
+        return results.filter(x => x.analyzer_id === this.analyserID).map(x => {
           return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
         })[0]
-
       })
-
     }).catch(e => {
-      console.log('[analyser ' + chalk.green(this.analyserID) + '] ',chalk.red("*** failed to get the results **** "), e.toString())
+      console.log('[analyser ' + chalk.green(this.analyserID) + '] ', chalk.red('*** failed to get the results **** '), e.toString())
       return null
     })
   }
