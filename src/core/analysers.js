@@ -2,7 +2,7 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:34:44
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-28 09:11:21
+* @Last Modified time: 2020-11-02 09:36:45
 */
 
 const chalk = require('chalk')
@@ -80,11 +80,20 @@ class Analyser {
 
   results () {
     return this.init().then(() => {
-      return this.opClient.get('packet/analyzer-results/' + this.internalID).then(x => {
-        return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
+      /* There is a bug with the specific analyser API, so use the global one */
+      // return this.opClient.get('packet/analyzer-results/' + this.internalID).then(x => {
+      //   return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
+      // })
+
+      return this.opClient.get('packet/analyzer-results/' ).then(results => {
+        return results.filter(x=>x.analyzer_id==this.analyserID).map(x=>{
+          return { protocol: x.protocol_counters, flow: x.flow_counters, flows: x.flows }
+        })[0]
+
       })
+
     }).catch(e => {
-      console.log('[analyser ' + chalk.red(this.genID) + '] *** failed to get the results **** ', e)
+      console.log('[analyser ' + chalk.green(this.analyserID) + '] ',chalk.red("*** failed to get the results **** "), e.toString())
       return null
     })
   }
