@@ -2,10 +2,11 @@
 * @Author: ronanjs
 * @Date:   2020-10-21 08:31:11
 * @Last Modified by:   ronanjs
-* @Last Modified time: 2020-10-30 12:46:48
+* @Last Modified time: 2020-11-02 08:49:53
 */
 
 // const { dump } = require('./utils')
+const chalk = require('chalk')
 
 class TimeSources {
   constructor (opClient) {
@@ -52,13 +53,18 @@ class TimeSource {
     return this.opClient.get('time-sources/' + this.id)
       .then(x => x.stats.ntp)
       .catch(e => {
-        throw (new Error("No timesource '" + this.id + "'"))
+        console.log('[timesource ' + chalk.green(this.id) + '] ' + chalk.red('*** failed to get the stats *** '), e.toString())
+        return null
       })
   }
 
   keeper () {
     return this.opClient.get('time-keeper')
       .then(x => ({ state: x.state, stats: x.stats }))
+      .catch(e => {
+        console.log('[timesource ' + chalk.green(this.id) + '] ' + chalk.red('*** failed to get the keeper *** '), e.toString())
+        return null
+      })
   }
 }
 

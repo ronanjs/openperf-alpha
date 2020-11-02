@@ -33,10 +33,13 @@ class OpenPerfClient {
   waitUntilReady () {
     return fetch(this.server + 'version').then((x) => {
       if (x.status === 200) {
-        console.log('OpenPerf is now ready....')
+        console.log('[rest] OpenPerf ' + this.server + ' is now ready....')
         return true
       }
       console.log('Waiting for OpenPerf to be ready....', x.status)
+      return wait(1000).then(() => this.waitUntilReady())
+    }).catch(e => {
+      console.log('Waiting for OpenPerf to be ready....', e.toString())
       return wait(1000).then(() => this.waitUntilReady())
     })
   }
@@ -133,13 +136,11 @@ class Monitor {
 
     if (serverIP.split(':').length === 1) {
       this.server = 'http://' + serverIP + ':8080/'
-      this.command = 'monitor'
     } else {
       this.server = 'http://' + serverIP + '/monitor/'
-      this.command = 'check'
     }
 
-    this.init = fetch(this.server + this.command).then(x => {
+    this.init = fetch(this.server + 'check').then(x => {
       return x.status === 200
     }).catch(e => {
       return false
@@ -153,8 +154,8 @@ class Monitor {
         return false
       }
       return fetch(this.server + 'kill').then(x => x.json()).then(x => {
-        console.log('[rest] Restart OpenPerf instance ' + this.serverIP + ': ', x.status || x)
-        if (x !== 'ok' && x.status !== 'ok') return false
+        console.log('[rest] Restart OpenPerf instance ' + this.serverIP + ': ', x.status)
+        if (x.status !== 'ok') return false
         /* Wait for OP to be running again */
         return this.opClient.waitUntilReady()
       }).catch(e => {
@@ -166,7 +167,7 @@ class Monitor {
   resource (what) {
     return this.init.then(available => {
       if (!available) return 'n/a'
-      return fetch(this.server + this.command).then(x => x.json()).then(x => {
+      return fetch(this.server + 'check').then(x => x.json()).then(x => {
         if (x.status === 'ok') return x.data[what]; return '-'
       }).catch(e => {
         return 'x'

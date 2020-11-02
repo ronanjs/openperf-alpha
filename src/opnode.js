@@ -2,7 +2,7 @@
  * @Author: ronanjs
  * @Date:   2020-10-21 08:33:42
  * @Last Modified by:   ronanjs
- * @Last Modified time: 2020-10-30 13:47:59
+ * @Last Modified time: 2020-11-02 08:56:13
  */
 
 const { OpenPerfClient } = require('./core/opclient')
@@ -60,6 +60,10 @@ class OpenPerfNode {
   }
 
   start () {
+    if (!this.operator) {
+      console.log('Can not start ', this.client.serverIP, ': no operator defined')
+      return
+    }
     return this.operator.start()
   }
 }
